@@ -10,8 +10,16 @@
 typedef struct mat_t_ {
   size_t rows_;
   size_t cols_;
-  double* arr_;
+  float* arr_;
 } mat_t;
+
+void copy_inverse_mat(mat_t* m, mat_t* res) {
+  for(int i=0; i<res->rows_; i++) {
+    for(int j=0; j<res->cols_; j++) {
+      MAT_AT(res, i, j) = MAT_AT(m, i, j+res->cols_);
+    }
+  }
+}
 
 void get_extended_mat(mat_t* src, mat_t* dst) {
   for(int i=0; i<src->rows_; i++) {
@@ -30,7 +38,7 @@ mat_t create_mat(size_t rows, size_t cols) {
   mat_t m;
   m.rows_ = rows;
   m.cols_ = cols;
-  m.arr_ = (double*)malloc(sizeof(double)*rows*cols);
+  m.arr_ = (float*)malloc(sizeof(float)*rows*cols);
 
   return m;
 }
@@ -39,13 +47,13 @@ void free_mat(mat_t* m) {
   free(m->arr_);
 }
 
-double get_random_value(double from, double to) {
-  double range = to-from;
-  double div = RAND_MAX / range;
+float get_random_value(float from, float to) {
+  float range = to-from;
+  float div = RAND_MAX / range;
   return from + (rand()/div);
 }
 
-void fill_rand_mat(mat_t* m, double from, double to) {
+void fill_rand_mat(mat_t* m, float from, float to) {
   for(int i=0; i<m->rows_; i++) {
     for(int j=0; j<m->cols_; j++) {
       MAT_AT(m, i, j) = get_random_value(from, to);
@@ -61,7 +69,7 @@ void transpose_mat(mat_t* src, mat_t* dst) {
   }
 }
 
-void del_mat_val(mat_t* m, double val) {
+void del_mat_val(mat_t* m, float val) {
   for(int i=0; i<m->rows_; i++) {
     for(int j=0; j<m->cols_; j++) {
       MAT_AT(m, i, j) /= val;

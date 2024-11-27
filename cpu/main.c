@@ -24,13 +24,21 @@ int main(int argc, char** argv) {
   mat_t m_res = create_mat(sz, sz);
 
   fill_rand_mat(&m, 1.0, 10.0);
-  print_mat(&m);
+  // print_mat(&m);
 
   get_extended_mat(&m, &m_g);
-  print_mat(&m_g);
+  // print_mat(&m_g);
+
+  clock_t begin = clock();
 
   gausian_inverse(&m_g, &m_res);
-  print_mat(&m_res);
+
+  clock_t end = clock();
+  double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+  
+  printf("matrix size = %lux%lu | execution time = %5.2f\n", sz, sz, time_spent);
+
+  // print_mat(&m_res);
 
   free_mat(&m);
   free_mat(&m_g);
@@ -51,9 +59,9 @@ bool is_determinant_zero(mat_t* m) {
 
 void get_upper_triangular(mat_t* m) {
   for(int i=0; i<m->rows_; i++) {
-    double val_div = MAT_AT(m, i, i);
+    float val_div = MAT_AT(m, i, i);
     for(int j=i+1; j<m->rows_; j++) {
-      double val_mul = MAT_AT(m, j, i);
+      float val_mul = MAT_AT(m, j, i);
       for(int k=i; k<m->cols_; k++) {
         MAT_AT(m, j, k) -= MAT_AT(m, i, k) * val_mul / val_div;
       }
@@ -72,23 +80,42 @@ void gausian_inverse(mat_t* m, mat_t* res) {
   
   // make ones on main diag
   for(int i=0; i<m->rows_; i++) {
-    double val = MAT_AT(m, i, i);
+    float val = MAT_AT(m, i, i);
     for(int j=0; j<m->cols_; j++) MAT_AT(m, i, j) /= val;
       
     // proccess upper rows
     for(int j=i-1; j>=0; j--) {
-      double val_mul = MAT_AT(m, j, i);
+      float val_mul = MAT_AT(m, j, i);
       for(int k=i; k<m->cols_; k++) {
         MAT_AT(m, j, k) -= MAT_AT(m, i, k) * val_mul;
       }
     }
   }
 
-  // copy inversed matrix
-  for(int i=0; i<res->rows_; i++) {
-    for(int j=0; j<res->cols_; j++) {
-      MAT_AT(res, i, j) = MAT_AT(m, i, j+res->cols_);
-    }
-  }
+  copy_inverse_mat(m, res);
 }
 
+
+// __kernel void get_upper_triangular(__global float* m, const int cols, const int idx) {
+//     int i = get_global_id(0);
+//     int j = get_global_id(1);
+//  
+//     if(i < cols/2 && i > idx) {
+//       float div_val = m[idx*cols + idx];
+//       float mul_val = m[i*cols + idx];
+//       m[i*cols + j] -= m[idx*cols +j] * mul_val / div_val;
+//     }
+// }
+
+// __kernel void process_upper_rows(__global float* m, const int cols, const int idx) {
+//     int i = get_global_id(0);
+//     int j = get_global_id(1);
+//   
+//     float div_ = m[i*cols + i];
+//     m[i*cols + j] /= div_;
+
+//     if(i >= 0 && i < idx) {
+//       float mul_val = m[i*cols + idx];
+//       m[i*cols + j] -= m[idx*cols + j] * mul_val;
+//     }
+// }
