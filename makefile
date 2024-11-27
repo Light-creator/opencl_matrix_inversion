@@ -20,3 +20,23 @@ run_cpu:
 
 run_gpu:
 	$(OUT_GPU) $(SIZE)
+
+run_tests_cpu:
+	$(OUT_CPU) 16
+	$(OUT_CPU) 32
+	$(OUT_CPU) 128
+	$(OUT_CPU) 256
+	$(OUT_CPU) 512
+	$(OUT_CPU) 1024
+	$(OUT_CPU) 2048
+	$(OUT_CPU) 4096
+
+run_tests_gpu:
+	$(OUT_GPU) 16
+	$(OUT_GPU) 32
+	$(OUT_GPU) 128
+	$(OUT_GPU) 256
+	$(OUT_GPU) 512
+	$(OUT_GPU) 1024
+	$(OUT_GPU) 2048
+	$(OUT_GPU) 4096

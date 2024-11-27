@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
   clock_t end = clock();
   double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
   
-  printf("matrix size = %lux%lu | execution time = %5.2f\n", sz, sz, time_spent);
+  printf("matrix size = %lux%lu | execution time = %5.8f\n\n\n", sz, sz, time_spent);
 
   // print_mat(&m_res);
 
