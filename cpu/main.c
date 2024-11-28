@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
   if(argc < 2) {
     fprintf(stderr, "Usage: ./main <mat_size>\n");
   }
-
+  
   srand(time(NULL));
   
   size_t sz = atoi(argv[1]);

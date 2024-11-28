@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAT_AT(m, i, j) (m)->arr_[(i)*(m)->cols_+(j)]
 
@@ -85,6 +86,33 @@ void print_mat(mat_t* m) {
     printf("\n");
   }
   printf("\n");
+}
+
+int get_mat_from_file(const char* file_path, mat_t* m) {
+  FILE* f = fopen(file_path, "r");
+  if(!f) {
+    fprintf(stderr, "File %s does not exists\n", file_path);
+    return 1;
+  }
+    
+  char buf[1024];
+  int row = 0;
+  while(fgets(buf, 1024, f)) {
+    size_t str_len = strlen(buf);
+    // printf("str_len: %lu, str: %s", str_len, buf);
+    char* tk = strtok(buf, " ");
+    int col = 0;
+    while(tk) {
+      MAT_AT(m, row, col) = atof(tk);
+      tk = strtok(NULL, " ");
+      col++;
+    }
+    row++;
+  }
+
+  fclose(f);
+
+  return 0;
 }
 
 
